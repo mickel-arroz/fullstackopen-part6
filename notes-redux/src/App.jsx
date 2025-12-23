@@ -1,40 +1,38 @@
-import { useEffect, useState } from 'react';
-
-import { legacy_createStore as createStore } from 'redux';
-
-const counterReducer = (state = 0, action) => {
-  switch (action.type) {
-    case 'INCREMENT':
-      return state + 1;
-    case 'DECREMENT':
-      return state - 1;
-    case 'ZERO':
-      return 0;
-    default:
-      return state;
-  }
-};
-
-const store = createStore(counterReducer);
+import { createNote, toggleImportanceOf } from './reducers/noteReducer';
+import { useSelector, useDispatch } from 'react-redux';
 
 const App = () => {
-  const [value, setValue] = useState(store.getState());
+  const dispatch = useDispatch();
+  const notes = useSelector((state) => state);
 
-  useEffect(() => {
-    const unsubscribe = store.subscribe(() => setValue(store.getState()));
-    return unsubscribe;
-  }, []);
+  const addNote = (event) => {
+    event.preventDefault();
+    const content = event.target.note.value;
+    event.target.note.value = '';
+    dispatch(createNote(content));
+  };
+
+  const toggleImportance = (id) => {
+    dispatch(toggleImportanceOf(id));
+  };
 
   return (
     <div>
-      <div>{value}</div>
-      <button onClick={() => store.dispatch({ type: 'INCREMENT' })}>
-        plus
-      </button>
-      <button onClick={() => store.dispatch({ type: 'DECREMENT' })}>
-        minus
-      </button>
-      <button onClick={() => store.dispatch({ type: 'ZERO' })}>zero</button>
+      <form
+        onSubmit={(event) => {
+          addNote(event);
+        }}
+      >
+        <input name="note" />
+        <button type="submit">add</button>
+      </form>
+      <ul>
+        {notes.map((note) => (
+          <li key={note.id} onClick={() => toggleImportance(note.id)}>
+            {note.content} <strong>{note.important ? 'important' : ''}</strong>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
