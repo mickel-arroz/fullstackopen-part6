@@ -12,10 +12,9 @@ const AnecdoteList = () => {
 
   const vote = (id) => {
     const anecdote = anecdotes.find((item) => item.id === id);
-    dispatch(voteAnecdote(id));
-    if (anecdote) {
-      dispatch(showNotification(`you voted '${anecdote.content}'`));
-    }
+    if (!anecdote) return;
+    dispatch(voteAnecdote(anecdote));
+    dispatch(showNotification(`you voted '${anecdote.content}'`));
   };
 
   return (
