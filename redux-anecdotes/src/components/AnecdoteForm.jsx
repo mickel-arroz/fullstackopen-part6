@@ -1,5 +1,7 @@
 import { useDispatch } from 'react-redux';
 import { useState } from 'react';
+import { createAnecdote } from '../reducers/anecdoteReducer';
+import { showNotification } from '../reducers/notificationReducer';
 
 const AnecdoteForm = () => {
   const dispatch = useDispatch();
@@ -9,7 +11,8 @@ const AnecdoteForm = () => {
     e.preventDefault();
     const trimmed = content.trim();
     if (!trimmed) return;
-    dispatch({ type: 'CREATE', content: trimmed });
+    dispatch(createAnecdote(trimmed));
+    dispatch(showNotification(`you created '${trimmed}'`));
     setContent('');
   };
 
